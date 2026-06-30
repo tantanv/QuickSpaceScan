@@ -1,0 +1,15 @@
+<RCC>
+  <qresource prefix="/qt/qml/QuickSpaceScan/">
+    <file alias="Main.qml">D:/Code/c++/qt/QuickSpaceScan/Main.qml</file>
+    <file alias="ui/views/HomeView.qml">D:/Code/c++/qt/QuickSpaceScan/ui/views/HomeView.qml</file>
+    <file alias="ui/views/Sidebar.qml">D:/Code/c++/qt/QuickSpaceScan/ui/views/Sidebar.qml</file>
+    <file alias="ui/components/TreeListView.qml">D:/Code/c++/qt/QuickSpaceScan/ui/components/TreeListView.qml</file>
+    <file alias="ui/components/TreeItemDelegate.qml">D:/Code/c++/qt/QuickSpaceScan/ui/components/TreeItemDelegate.qml</file>
+    <file alias="ui/components/StatusBar.qml">D:/Code/c++/qt/QuickSpaceScan/ui/components/StatusBar.qml</file>
+    <file alias="ui/components/IconButton.qml">D:/Code/c++/qt/QuickSpaceScan/ui/components/IconButton.qml</file>
+    <file alias="ui/themes/ThemeManager.qml">D:/Code/c++/qt/QuickSpaceScan/ui/themes/ThemeManager.qml</file>
+    <file alias="ui/themes/LightTheme.qml">D:/Code/c++/qt/QuickSpaceScan/ui/themes/LightTheme.qml</file>
+    <file alias="ui/themes/DarkTheme.qml">D:/Code/c++/qt/QuickSpaceScan/ui/themes/DarkTheme.qml</file>
+  </qresource>
+</RCC>
+
