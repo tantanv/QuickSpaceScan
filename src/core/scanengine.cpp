@@ -446,10 +446,10 @@ void ScanEngine::onDirScanned(const DirScanResult &result, int generation)
     parentItem->addSize(dirFileSize);
     m_totalSize += dirFileSize;
 
-    emit scannedFilesChanged();
-    emit itemCountChanged();
-    emit totalSizeChanged();
-    emit batchItemsAdded();
+    // emit scannedFilesChanged();
+    // emit itemCountChanged();
+    // emit totalSizeChanged();
+    // emit batchItemsAdded();
 }
 
 void ScanEngine::onTaskComplete(int generation)

@@ -311,20 +311,20 @@ Rectangle {
                         Layout.fillWidth: true
                     }
 
-                    Row {
-                        spacing: 6
-                        visible: isScanning
-                        BusyIndicator {
-                            width: 16; height: 16
-                            running: isScanning
-                        }
-                        Label {
-                            text: formatTotalSize(scanEngine.totalSize)
-                            font.pixelSize: 12
-                            color: theme.textMuted
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                    }
+                    // Row {
+                    //     spacing: 6
+                    //     visible: isScanning
+                    //     BusyIndicator {
+                    //         width: 16; height: 16
+                    //         running: isScanning
+                    //     }
+                    //     Label {
+                    //         text: formatTotalSize(scanEngine.totalSize)
+                    //         font.pixelSize: 12
+                    //         color: theme.textMuted
+                    //         anchors.verticalCenter: parent.verticalCenter
+                    //     }
+                    // }
                 }
 
                 Rectangle {
