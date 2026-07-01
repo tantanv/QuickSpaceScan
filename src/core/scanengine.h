@@ -99,6 +99,9 @@ private:
     void calculateStats(TreeItem *item, quint64 &totalSize, quint64 &itemCount, quint64 &fileCount);
     bool isSameDrive(const QString &path1, const QString &path2);
     QString getDriveRoot(const QString &path);
+    TreeItem* findItemByPath(const QString &path);
+    void removeItemByPath(const QString &path);
+    QString normalizePathKey(const QString &path);
 
     bool m_scanning = false;
     QAtomicInt m_stopFlag;

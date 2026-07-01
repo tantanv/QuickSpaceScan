@@ -81,7 +81,11 @@ Rectangle {
         function onCurrentPathChanged() {
             currentScanPath = scanEngine.currentPath
             treeListView.currentPath = currentScanPath
+            treeListView.rootItem = scanEngine.rootItem
+            treeListView.rebuildFlatList()
             statusText = isScanning ? "扫描中..." : "就绪"
+            statusItemCount = scanEngine.itemCount
+            statusSizeText = formatTotalSize(scanEngine.totalSize)
         }
         function onPathDeleted(path) {
             treeListView.selectedPath = ""
@@ -110,31 +114,11 @@ Rectangle {
     }
 
     function openFolder(path) {
-        if (!scanEngine.navigateToPath(path)) {
-            startScan(path, false)
-        } else {
-            currentScanPath = path
-            treeListView.selectedPath = ""
-            treeListView.currentPath = currentScanPath
-            treeListView.rebuildFlatList()
-            statusText = "就绪"
-            statusItemCount = scanEngine.itemCount
-            statusSizeText = formatTotalSize(scanEngine.totalSize)
-        }
+        scanEngine.navigateToPath(path)
     }
 
     function goToParent() {
-        if (!currentScanPath) return
-        if (isRootPath(currentScanPath)) return
-        if (scanEngine.navigateToParent()) {
-            currentScanPath = scanEngine.currentPath
-            treeListView.selectedPath = ""
-            treeListView.currentPath = currentScanPath
-            treeListView.rebuildFlatList()
-            statusText = "就绪"
-            statusItemCount = scanEngine.itemCount
-            statusSizeText = formatTotalSize(scanEngine.totalSize)
-        }
+        scanEngine.navigateToParent()
     }
 
     function openInExplorer(path) { scanEngine.openInExplorer(path) }
@@ -298,7 +282,7 @@ Rectangle {
                     ToolButton {
                         width: 32
                         height: 32
-                        visible: currentScanPath.length > 3
+                        visible: currentScanPath && !isRootPath(currentScanPath)
                         text: "‹"
                         font.pixelSize: 20
                         font.weight: Font.Bold

@@ -121,6 +121,26 @@ QString ScanEngine::getDriveRoot(const QString &path)
     return path.left(1).toUpper() + ":\\";
 }
 
+QString ScanEngine::normalizePathKey(const QString &path)
+{
+    QString p = QDir::cleanPath(path);
+    p = QDir::toNativeSeparators(p);
+    if (p.length() == 2 && p[1] == ':') {
+        p += "\\";
+    }
+    return p.toLower();
+}
+
+TreeItem* ScanEngine::findItemByPath(const QString &path)
+{
+    return m_pathToItem.value(normalizePathKey(path), nullptr);
+}
+
+void ScanEngine::removeItemByPath(const QString &path)
+{
+    m_pathToItem.remove(normalizePathKey(path));
+}
+
 void ScanEngine::clearDisplayedData()
 {
     m_pathToItem.clear();
@@ -186,30 +206,36 @@ void ScanEngine::setupDisplayedItem(TreeItem *item, const QString &path)
 
 bool ScanEngine::navigateToPath(const QString &path)
 {
-    m_stopFlag.storeRelaxed(1);
-    m_threadPool.waitForDone();
-    m_scanGeneration++;
-    m_activeTasks = 0;
-
-    QString cleanPath = QDir::cleanPath(path);
-    if (!cleanPath.endsWith("\\") && !cleanPath.endsWith("/") && cleanPath.length() <= 3) {
-        cleanPath += "\\";
-    }
-
-    TreeItem *item = m_pathToItem.value(cleanPath, nullptr);
-    if (!item) {
-        QString lowerPath = cleanPath.toLower();
-        for (auto it = m_pathToItem.begin(); it != m_pathToItem.end(); ++it) {
-            if (it.key().toLower() == lowerPath) {
-                item = it.value();
-                break;
-            }
-        }
-    }
-
+    TreeItem *item = findItemByPath(path);
     if (!item) return false;
 
-    setupDisplayedItem(item, cleanPath);
+    QString displayPath = QDir::toNativeSeparators(QDir::cleanPath(path));
+    if (displayPath.length() == 2 && displayPath[1] == ':') {
+        displayPath += "\\";
+    }
+
+    m_displayedItem = item;
+    m_currentPath = displayPath;
+
+    if (!m_scanning) {
+        quint64 totalSize = 0;
+        quint64 itemCount = 0;
+        quint64 fileCount = 0;
+        calculateStats(item, totalSize, itemCount, fileCount);
+        m_totalSize = item->size();
+        m_itemCount = itemCount;
+        m_scannedFiles = fileCount;
+    }
+
+    item->setExpanded(true);
+
+    emit rootItemChanged();
+    emit currentPathChanged();
+    emit totalSizeChanged();
+    emit itemCountChanged();
+    emit scannedFilesChanged();
+    emit batchItemsAdded();
+
     return true;
 }
 
@@ -226,30 +252,24 @@ bool ScanEngine::navigateToParent()
 
 void ScanEngine::startScan(const QString &path, bool forceRefresh)
 {
+    QString driveRoot = getDriveRoot(path);
+    bool sameDrive = m_scanRootItem && isSameDrive(path, m_scanRootPath);
+
+    if (sameDrive && !forceRefresh) {
+        TreeItem *rootItem = findItemByPath(driveRoot);
+        if (rootItem) {
+            navigateToPath(driveRoot);
+            return;
+        }
+    }
+
     m_stopFlag.storeRelaxed(1);
     m_threadPool.waitForDone();
     m_scanGeneration++;
     m_activeTasks = 0;
 
-    QString cleanPath = QDir::cleanPath(path);
-    if (!cleanPath.endsWith("\\") && !cleanPath.endsWith("/") && cleanPath.length() <= 3) {
-        cleanPath += "\\";
-    }
+    clearAllData();
 
-    bool sameDrive = m_scanRootItem && isSameDrive(cleanPath, m_scanRootPath);
-
-    if (sameDrive && !forceRefresh) {
-        if (m_pathToItem.contains(cleanPath)) {
-            navigateToPath(cleanPath);
-            return;
-        }
-    }
-
-    if (!sameDrive || forceRefresh) {
-        clearAllData();
-    }
-
-    QString driveRoot = getDriveRoot(cleanPath);
     m_scanRootPath = driveRoot;
 
     m_stopFlag.storeRelaxed(0);
@@ -266,8 +286,8 @@ void ScanEngine::startScan(const QString &path, bool forceRefresh)
     m_scanRootItem->setExpanded(true);
 
     m_displayedItem = m_scanRootItem;
-    m_pathToItem[driveRoot] = m_scanRootItem;
-    m_visitedPaths.insert(QDir::cleanPath(driveRoot).toLower());
+    m_pathToItem[normalizePathKey(driveRoot)] = m_scanRootItem;
+    m_visitedPaths.insert(normalizePathKey(driveRoot));
 
     m_scanning = true;
 
@@ -288,22 +308,7 @@ void ScanEngine::rescanPath(const QString &path)
     m_scanGeneration++;
     m_activeTasks = 0;
 
-    QString cleanPath = QDir::cleanPath(path);
-    if (!cleanPath.endsWith("\\") && !cleanPath.endsWith("/") && cleanPath.length() <= 3) {
-        cleanPath += "\\";
-    }
-
-    TreeItem *item = m_pathToItem.value(cleanPath, nullptr);
-    if (!item) {
-        QString lowerPath = cleanPath.toLower();
-        for (auto it = m_pathToItem.begin(); it != m_pathToItem.end(); ++it) {
-            if (it.key().toLower() == lowerPath) {
-                item = it.value();
-                break;
-            }
-        }
-    }
-
+    TreeItem *item = findItemByPath(path);
     if (!item) {
         startScan(path, true);
         return;
@@ -320,9 +325,8 @@ void ScanEngine::rescanPath(const QString &path)
     collectChildren(item);
 
     for (TreeItem *child : allChildren) {
-        m_pathToItem.remove(child->path());
-        QString cleanChildPath = QDir::cleanPath(child->path()).toLower();
-        m_visitedPaths.remove(cleanChildPath);
+        removeItemByPath(child->path());
+        m_visitedPaths.remove(normalizePathKey(child->path()));
     }
 
     quint64 oldSize = item->size();
@@ -338,7 +342,12 @@ void ScanEngine::rescanPath(const QString &path)
 
     m_stopFlag.storeRelaxed(0);
     m_scanning = true;
-    m_currentPath = cleanPath;
+
+    QString displayPath = QDir::toNativeSeparators(QDir::cleanPath(path));
+    if (displayPath.length() == 2 && displayPath[1] == ':') {
+        displayPath += "\\";
+    }
+    m_currentPath = displayPath;
     m_displayedItem = item;
     m_totalSize = 0;
     m_scannedFiles = 0;
@@ -352,7 +361,11 @@ void ScanEngine::rescanPath(const QString &path)
     emit scannedFilesChanged();
     emit batchItemsAdded();
 
-    submitTask(cleanPath);
+    QString scanPath = QDir::toNativeSeparators(QDir::cleanPath(path));
+    if (scanPath.length() == 2 && scanPath[1] == ':') {
+        scanPath += "\\";
+    }
+    submitTask(scanPath);
 }
 
 void ScanEngine::submitTask(const QString &path)
@@ -380,7 +393,7 @@ void ScanEngine::onScanStarted(const QString &path, int generation)
     if (generation != m_scanGeneration) return;
     if (m_stopFlag.loadRelaxed() != 0) return;
 
-    TreeItem *item = m_pathToItem.value(path);
+    TreeItem *item = findItemByPath(path);
     if (item) {
         item->setCalculating(false);
     }
@@ -391,7 +404,7 @@ void ScanEngine::onDirScanned(const DirScanResult &result, int generation)
     if (generation != m_scanGeneration) return;
     if (m_stopFlag.loadRelaxed() != 0) return;
 
-    TreeItem *parentItem = m_pathToItem.value(result.dirPath);
+    TreeItem *parentItem = findItemByPath(result.dirPath);
     if (!parentItem) return;
 
     quint64 dirFileSize = 0;
@@ -403,7 +416,7 @@ void ScanEngine::onDirScanned(const DirScanResult &result, int generation)
         item->setIsDir(false);
         item->setSize(fe.size);
         parentItem->appendChild(item);
-        m_pathToItem[fe.path] = item;
+        m_pathToItem[normalizePathKey(fe.path)] = item;
         dirFileSize += fe.size;
         m_scannedFiles++;
         m_itemCount++;
@@ -413,9 +426,9 @@ void ScanEngine::onDirScanned(const DirScanResult &result, int generation)
         const QString &subPath = result.subdirPaths[i];
         const QString &subName = result.subdirNames[i];
 
-        QString cleanPath = QDir::cleanPath(subPath).toLower();
-        if (m_visitedPaths.contains(cleanPath)) continue;
-        m_visitedPaths.insert(cleanPath);
+        QString key = normalizePathKey(subPath);
+        if (m_visitedPaths.contains(key)) continue;
+        m_visitedPaths.insert(key);
 
         TreeItem *item = new TreeItem(parentItem);
         item->setName(subName);
@@ -424,7 +437,7 @@ void ScanEngine::onDirScanned(const DirScanResult &result, int generation)
         item->setSize(0);
         item->setCalculating(true);
         parentItem->appendChild(item);
-        m_pathToItem[subPath] = item;
+        m_pathToItem[normalizePathKey(subPath)] = item;
         m_itemCount++;
 
         submitTask(subPath);
@@ -512,7 +525,7 @@ bool ScanEngine::deletePath(const QString &path)
     }
 
     if (ok) {
-        TreeItem *item = m_pathToItem.value(path, nullptr);
+        TreeItem *item = findItemByPath(path);
         if (item) {
             TreeItem *parent = item->parent();
             quint64 itemSize = item->size();
@@ -527,7 +540,8 @@ bool ScanEngine::deletePath(const QString &path)
             collectAll(item);
 
             for (TreeItem *node : toDelete) {
-                m_pathToItem.remove(node->path());
+                removeItemByPath(node->path());
+                m_visitedPaths.remove(normalizePathKey(node->path()));
             }
 
             bool isDisplayed = (item == m_displayedItem);
