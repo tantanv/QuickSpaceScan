@@ -1,6 +1,0 @@
-<RCC>
-  <qresource prefix="/qt/qml/QuickSpaceScan">
-    <file alias="qmldir">D:/Code/c++/qt/QuickSpaceScan/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Release/QuickSpaceScan/qmldir</file>
-  </qresource>
-</RCC>
-
