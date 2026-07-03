@@ -38,8 +38,8 @@ QuickSpaceScan 是一款类似 TreeSize / WizTree 的 Windows 磁盘空间分析
 <!-- 在实际发布时替换为真实截图 -->
 <p align="center">
   <img src="screenshots/main_page.png" width="800" alt="主界面">
-  <img src="screenshots/setting_ai.png" width="600" alt="设置-AI">
-  <img src="screenshots/setting_zhuti.png" width="600" alt="设置-主题">
+  <img src="screenshots/setting_ai.png" width="800" alt="设置-AI">
+  <img src="screenshots/setting_zhuti.png" width="800" alt="设置-主题">
 </p>
 
 ## 构建 / Building
@@ -146,6 +146,7 @@ QuickSpaceScan/
 | 模块 | 说明 |
 |------|------|
 | 多线程扫描 | QThreadPool + QRunnable，目录级任务分发，切换路径立即停止旧扫描 |
+| 算法 | 主要使用广度优先算法对磁盘进行扫描，避免扫描深度过大导致栈溢出问题 |
 | 刷新节流 | 150ms 批量刷新 UI，高频文件信号不直接刷新界面 |
 | 坐标映射 | TreeItem 均在主线程创建，跨线程使用 QueuedConnection |
 | 路径规范化 | 统一小写+反斜杠作为 key，O(1) 哈希查找路径节点 |
@@ -161,15 +162,6 @@ QuickSpaceScan/
 5. **删除文件**：右键文件夹选择删除，查看风险等级警告后确认
 6. **外部打开**：右键文件夹选择"在资源管理器中打开"
 7. **切换主题/配置AI**：点击右上角 ⚙️ 设置按钮
-
-## 快捷键 / Shortcuts
-
-| 按键 | 功能 |
-|------|------|
-| `F5` | 刷新当前目录 |
-| `Enter`（路径栏） | 跳转到指定路径 |
-| `Esc`（路径栏） | 取消编辑，恢复当前路径 |
-| `Backspace` | 返回上级目录 |
 
 ## 已知限制 / Limitations
 
@@ -188,3 +180,4 @@ QuickSpaceScan/
 ---
 
 **如果这个工具对你有帮助，欢迎给个 ⭐ Star！**
+本软件大部分是AI辅助编写，暂时只对部分关键代码进行优化，qml页面部分代码不建议学习。
