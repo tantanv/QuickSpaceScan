@@ -37,10 +37,9 @@ QuickSpaceScan 是一款类似 TreeSize / WizTree 的 Windows 磁盘空间分析
 
 <!-- 在实际发布时替换为真实截图 -->
 <p align="center">
-  <em>（将截图放入 screenshots/ 目录后取消注释）</em><br>
-  <!-- <img src="screenshots/main.png" width="800" alt="主界面"> -->
-  <!-- <img src="screenshots/delete-warning.png" width="600" alt="删除警告"> -->
-  <!-- <img src="screenshots/settings.png" width="600" alt="设置"> -->
+  <img src="screenshots/main_page.png" width="800" alt="主界面">
+  <img src="screenshots/setting_ai.png" width="600" alt="设置-AI">
+  <img src="screenshots/setting_zhuti.png" width="600" alt="设置-主题">
 </p>
 
 ## 构建 / Building
