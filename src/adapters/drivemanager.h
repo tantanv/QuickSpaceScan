@@ -6,6 +6,13 @@
 #include <QStringList>
 
 class DriveInfo {
+    Q_GADGET
+    Q_PROPERTY(QString name MEMBER name)
+    Q_PROPERTY(QString path MEMBER path)
+    Q_PROPERTY(QString totalSize MEMBER totalSize)
+    Q_PROPERTY(QString freeSpace MEMBER freeSpace)
+    Q_PROPERTY(quint64 totalBytes MEMBER totalBytes)
+    Q_PROPERTY(quint64 freeBytes MEMBER freeBytes)
 public:
     QString name;
     QString path;
@@ -14,6 +21,7 @@ public:
     quint64 totalBytes = 0;
     quint64 freeBytes = 0;
 };
+Q_DECLARE_METATYPE(DriveInfo)
 
 class DriveManager : public QAbstractListModel
 {

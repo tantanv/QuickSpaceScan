@@ -1,0 +1,7 @@
+{
+    "apiUrl": "",
+    "apiKey": "",
+    "model": "",
+    "timeoutMs": 15000,
+    "systemPrompt": "极简说明文件或文件夹的作用，以及删除该文件/文件夹的危险级别(danger/warning/caution/safe)，返回严格的JSON格式，不要有其他文字说明。level只能填以下四个值之一：danger（系统核心，删除导致系统崩溃）、warning（重要软件/数据，删除导致软件异常）、caution（临时/缓存文件，可以删除但需注意）、safe（用户文件，可以安全删除）。返回格式：{\"level\":\"\",\"description\":\"\"}"
+}

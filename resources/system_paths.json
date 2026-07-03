@@ -1,0 +1,1072 @@
+{
+  "riskLevels": {
+    "danger": {
+      "level": 3,
+      "label": "危险",
+      "color": "#E81123",
+      "description": "系统核心目录，删除将导致系统崩溃或无法启动，绝对不可删除！"
+    },
+    "warning": {
+      "level": 2,
+      "label": "警告",
+      "color": "#FF8C00",
+      "description": "系统或程序重要目录，删除可能导致软件异常或系统功能受损，谨慎操作！"
+    },
+    "caution": {
+      "level": 1,
+      "label": "注意",
+      "color": "#F7B500",
+      "description": "临时/缓存目录，可以清理但建议通过系统工具操作，手动删除需确认内容。"
+    },
+    "safe": {
+      "level": 0,
+      "label": "安全",
+      "color": "#107C10",
+      "description": "用户数据目录，可以安全删除其中不需要的文件。"
+    }
+  },
+  "paths": [
+    {
+      "path": "Windows",
+      "name": "Windows系统目录",
+      "level": "danger",
+      "description": "Windows操作系统核心目录，包含系统文件、驱动程序、系统配置等。删除此目录或其中关键文件将导致系统完全无法启动。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\System32",
+      "name": "System32系统目录",
+      "level": "danger",
+      "description": "Windows核心系统文件目录，包含DLL库、EXE程序、驱动等系统运行必需文件。绝对不可删除任何文件！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\SysWOW64",
+      "name": "SysWOW64系统目录",
+      "level": "danger",
+      "description": "32位Windows系统文件在64位系统上的存储目录，包含32位DLL和系统程序。删除会导致32位程序无法运行！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\WinSxS",
+      "name": "WinSxS组件存储",
+      "level": "warning",
+      "description": "Windows系统组件存储目录，包含系统更新和组件备份。不要手动删除！请通过「磁盘清理」工具清理。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\Installer",
+      "name": "Windows安装缓存",
+      "level": "warning",
+      "description": "Windows安装程序缓存目录，包含软件安装/卸载/修复所需的MSI和MSP文件。手动删除会导致软件无法卸载或更新。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\SoftwareDistribution",
+      "name": "Windows更新缓存",
+      "level": "caution",
+      "description": "Windows Update下载缓存目录。可以清理，但建议通过停止Windows Update服务后操作，或使用磁盘清理。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\Temp",
+      "name": "Windows临时文件",
+      "level": "caution",
+      "description": "系统临时文件目录，其中的文件可以安全删除。但正在使用的文件无法删除，建议重启后清理或使用磁盘清理工具。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Prefetch",
+      "name": "预读取缓存",
+      "level": "caution",
+      "description": "Windows预读取缓存目录，用于加速程序启动。可以删除，但会短暂降低程序启动速度，系统会自动重建。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Logs",
+      "name": "系统日志目录",
+      "level": "caution",
+      "description": "Windows系统日志目录，可以删除旧日志文件，但建议通过事件查看器清理。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Fonts",
+      "name": "系统字体目录",
+      "level": "danger",
+      "description": "系统字体目录，包含Windows和应用程序使用的字体文件。删除字体会导致软件界面显示异常！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\SystemApps",
+      "name": "系统应用目录",
+      "level": "danger",
+      "description": "Windows系统UWP应用目录，包含开始菜单、设置、任务栏等系统界面组件。删除会导致系统界面无法正常工作！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\WinStore",
+      "name": "应用商店目录",
+      "level": "danger",
+      "description": "Microsoft Store应用商店相关文件目录。删除会导致无法下载和更新UWP应用！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\Boot",
+      "name": "启动引导目录",
+      "level": "danger",
+      "description": "Windows启动引导目录，包含BCD启动配置数据和EFI引导文件。删除会导致系统无法启动！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\Cursors",
+      "name": "鼠标指针目录",
+      "level": "warning",
+      "description": "系统鼠标指针/光标目录，包含默认的鼠标指针方案。删除自定义指针没问题，但不要删除默认指针。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Help",
+      "name": "帮助文件目录",
+      "level": "caution",
+      "description": "Windows帮助文件目录。可以删除，但系统帮助将无法使用。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\IME",
+      "name": "输入法目录",
+      "level": "danger",
+      "description": "Windows输入法目录，包含中文/日文/韩文输入法组件。删除会导致无法输入中文！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\Media",
+      "name": "系统声音目录",
+      "level": "caution",
+      "description": "Windows系统声音目录（提示音、通知音等）。可以删除不喜欢的声音文件，但系统声音会消失。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Registration",
+      "name": "COM注册目录",
+      "level": "danger",
+      "description": "COM+组件注册目录，包含系统COM组件的注册信息。删除会导致依赖COM的程序崩溃！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\ServiceProfiles",
+      "name": "服务配置目录",
+      "level": "danger",
+      "description": "Windows服务配置文件目录，包含系统服务和网络服务的配置数据。删除会导致系统服务异常！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\servicing",
+      "name": "系统服务目录",
+      "level": "danger",
+      "description": "Windows系统维护和更新服务目录。删除会导致无法安装系统更新！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\Speech",
+      "name": "语音识别目录",
+      "level": "warning",
+      "description": "Windows语音识别和TTS语音合成目录。删除会导致语音功能失效。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\TAPI",
+      "name": "电话API目录",
+      "level": "warning",
+      "description": "Windows TAPI电话接口目录，用于调制解调器和电话设备支持。不使用拨号设备可删除，但建议保留。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\Tasks",
+      "name": "计划任务目录",
+      "level": "warning",
+      "description": "Windows计划任务目录，包含系统和软件自动执行的任务配置。删除可能导致自动更新等功能失效。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Twain_32",
+      "name": "扫描仪驱动目录",
+      "level": "warning",
+      "description": "TWAIN扫描仪驱动目录。不使用扫描仪可以删除，但删除后扫描仪无法使用。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Web",
+      "name": "壁纸/锁屏目录",
+      "level": "caution",
+      "description": "Windows壁纸、锁屏图片和屏幕保护目录。可以删除不需要的壁纸图片，不会影响系统运行。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\AppCompat",
+      "name": "应用兼容目录",
+      "level": "warning",
+      "description": "Windows应用程序兼容性数据库目录，包含程序兼容性设置。删除可能导致老程序无法正常运行。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\AppPatch",
+      "name": "应用补丁目录",
+      "level": "danger",
+      "description": "Windows应用程序兼容补丁目录，包含系统应用兼容性补丁（.sdb文件）。删除会导致很多程序无法启动！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\assembly",
+      "name": ".NET程序集目录",
+      "level": "danger",
+      "description": ".NET Framework全局程序集缓存(GAC)，包含.NET程序运行所需的类库。删除会导致.NET程序无法运行！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\Microsoft.NET",
+      "name": ".NET Framework目录",
+      "level": "danger",
+      "description": ".NET Framework安装目录，包含.NET运行时和类库。删除会导致所有.NET程序无法运行！",
+      "matchChildren": false
+    },
+    {
+      "path": "Program Files",
+      "name": "Program Files",
+      "level": "warning",
+      "description": "64位程序安装目录，包含已安装的软件程序。不要手动删除文件夹，请通过「设置-应用」或「控制面板-程序和功能」卸载软件。",
+      "matchChildren": true
+    },
+    {
+      "path": "Program Files (x86)",
+      "name": "Program Files (x86)",
+      "level": "warning",
+      "description": "32位程序安装目录，包含已安装的32位软件程序。不要手动删除文件夹，请通过正常卸载程序移除软件。",
+      "matchChildren": true
+    },
+    {
+      "path": "Program Files\\Common Files",
+      "name": "Common Files公共文件",
+      "level": "danger",
+      "description": "64位程序公共组件目录，包含多个软件共享的组件和库。删除会导致共享这些组件的软件无法运行！",
+      "matchChildren": false
+    },
+    {
+      "path": "Program Files (x86)\\Common Files",
+      "name": "Common Files公共文件(x86)",
+      "level": "danger",
+      "description": "32位程序公共组件目录，包含多个32位软件共享的组件和库。删除会导致共享这些组件的软件无法运行！",
+      "matchChildren": false
+    },
+    {
+      "path": "Program Files\\WindowsApps",
+      "name": "Windows应用目录",
+      "level": "danger",
+      "description": "Microsoft Store UWP应用安装目录。权限极高，正常情况下无法访问，不要强行修改或删除！",
+      "matchChildren": false
+    },
+    {
+      "path": "Program Files\\Windows Defender",
+      "name": "Windows Defender目录",
+      "level": "danger",
+      "description": "Windows Defender杀毒软件目录，包含系统内置杀毒程序。删除会导致系统失去病毒防护！",
+      "matchChildren": false
+    },
+    {
+      "path": "ProgramData",
+      "name": "ProgramData",
+      "level": "warning",
+      "description": "程序公共数据目录，包含软件的全局设置和数据。手动删除可能导致软件丢失配置或无法运行。",
+      "matchChildren": true
+    },
+    {
+      "path": "ProgramData\\Microsoft",
+      "name": "Microsoft程序数据",
+      "level": "danger",
+      "description": "微软软件公共数据目录，包含Windows和Office等微软产品的重要配置数据，删除会导致系统或Office异常。",
+      "matchChildren": false
+    },
+    {
+      "path": "ProgramData\\Package Cache",
+      "name": "安装包缓存",
+      "level": "warning",
+      "description": "Visual Studio等软件的安装包缓存目录。可以删除，但会导致无法修复或更新相关软件。",
+      "matchChildren": true
+    },
+    {
+      "path": "Users",
+      "name": "用户目录",
+      "level": "safe",
+      "description": "用户目录，包含各用户的文档、下载、桌面、图片等个人文件。可以安全删除你确认不需要的个人文件。",
+      "matchChildren": false
+    },
+    {
+      "path": "Users\\*",
+      "name": "用户个人目录",
+      "level": "safe",
+      "description": "个人用户目录，包含你的文档、下载、桌面、图片等数据。可以安全删除不需要的个人文件，但需注意AppData目录。",
+      "matchChildren": false,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData",
+      "name": "AppData应用数据",
+      "level": "warning",
+      "description": "应用程序数据目录，包含各软件的配置、缓存和数据。其中Local\\Temp可以清理，但其他子目录建议通过软件自身清理，手动删除可能导致软件丢失设置。",
+      "matchChildren": false,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Temp",
+      "name": "用户临时文件",
+      "level": "caution",
+      "description": "用户临时文件目录，可以安全删除其中的文件。正在使用的文件会被锁定无法删除。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Microsoft\\Windows\\INetCache",
+      "name": "浏览器缓存",
+      "level": "caution",
+      "description": "IE/Edge浏览器缓存目录，可以删除，但建议通过浏览器「清除浏览数据」功能清理。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Roaming",
+      "name": "Roaming漫游数据",
+      "level": "warning",
+      "description": "软件漫游数据目录，包含各软件的配置文件和用户数据。手动删除会导致软件重置为初始状态，丢失配置。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Packages",
+      "name": "UWP应用数据",
+      "level": "warning",
+      "description": "Microsoft Store应用（UWP）数据目录。不要手动删除，请通过「设置-应用」卸载不需要的UWP应用。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Microsoft\\Windows\\WinX",
+      "name": "WinX快捷方式目录",
+      "level": "warning",
+      "description": "Win+X快捷菜单目录。删除会导致Win+X菜单异常，不建议手动修改。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Microsoft\\Windows\\History",
+      "name": "IE历史记录",
+      "level": "caution",
+      "description": "IE浏览器历史记录目录。可以删除，建议通过浏览器清理。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Microsoft\\Windows\\Temporary Internet Files",
+      "name": "IE临时文件",
+      "level": "caution",
+      "description": "IE浏览器临时文件缓存目录。可以安全删除。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\Downloads",
+      "name": "下载文件夹",
+      "level": "safe",
+      "description": "下载文件夹，通常存放从浏览器下载的文件。可以安全删除你确认不需要的文件。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\Desktop",
+      "name": "桌面",
+      "level": "safe",
+      "description": "桌面文件夹，存放桌面快捷方式和文件。删除文件前请确认文件是否仍需要。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\Documents",
+      "name": "文档",
+      "level": "safe",
+      "description": "文档文件夹，通常存放个人文档、工作文件等。删除前请务必备份重要文件！",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\Pictures",
+      "name": "图片",
+      "level": "safe",
+      "description": "图片文件夹，存放个人照片和图片。删除前请确认照片已备份！",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\Videos",
+      "name": "视频",
+      "level": "safe",
+      "description": "视频文件夹，存放个人视频文件。视频文件通常较大，确认不需要后再删除。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\Music",
+      "name": "音乐",
+      "level": "safe",
+      "description": "音乐文件夹，存放音乐和音频文件。删除前请确认音乐文件已备份！",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\OneDrive",
+      "name": "OneDrive同步目录",
+      "level": "warning",
+      "description": "OneDrive云盘同步目录。删除会同步删除云端文件，请先确认不需要再删除！",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Microsoft\\Windows\\Explorer",
+      "name": "资源管理器缓存",
+      "level": "caution",
+      "description": "Windows资源管理器缩略图和图标缓存，可以删除，但系统会自动重建，删除后首次浏览文件夹会稍慢。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\CrashDumps",
+      "name": "崩溃转储目录",
+      "level": "caution",
+      "description": "程序崩溃转储文件目录，用于调试程序崩溃原因。可以安全删除。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\NVIDIA",
+      "name": "NVIDIA缓存",
+      "level": "caution",
+      "description": "NVIDIA显卡驱动缓存目录（GLCache/DXCache等），用于加速图形渲染。可以删除，但游戏/3D程序首次启动会稍慢。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Cache",
+      "name": "Chrome缓存",
+      "level": "caution",
+      "description": "Chrome浏览器缓存目录。建议通过Chrome「清除浏览数据」功能清理。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "$Recycle.Bin",
+      "name": "回收站",
+      "level": "caution",
+      "description": "回收站目录，存放已删除的文件。请右键桌面回收站图标选择「清空回收站」来释放空间，不要直接删除此文件夹。",
+      "matchChildren": true
+    },
+    {
+      "path": "System Volume Information",
+      "name": "系统卷信息",
+      "level": "danger",
+      "description": "系统卷信息目录，包含系统还原点、卷影副本、磁盘索引数据等。绝对不可访问或删除！",
+      "matchChildren": true
+    },
+    {
+      "path": "Boot",
+      "name": "启动目录",
+      "level": "danger",
+      "description": "Windows启动目录，包含系统启动所需的BCD引导配置数据。删除会导致系统无法启动！",
+      "matchChildren": true
+    },
+    {
+      "path": "Recovery",
+      "name": "恢复分区文件",
+      "level": "danger",
+      "description": "Windows恢复环境目录，包含系统恢复和修复工具。删除将无法使用系统修复和重置功能。",
+      "matchChildren": true
+    },
+    {
+      "path": "pagefile.sys",
+      "name": "页面文件",
+      "level": "danger",
+      "description": "Windows虚拟内存页面文件，系统运行必需。不要删除！如需调整大小请通过「系统属性-高级-性能设置」操作。",
+      "matchChildren": false
+    },
+    {
+      "path": "hiberfil.sys",
+      "name": "休眠文件",
+      "level": "warning",
+      "description": "休眠功能文件，占用与内存大小相当的空间。如不使用休眠功能，可以通过管理员命令「powercfg -h off」关闭休眠并自动删除此文件。",
+      "matchChildren": false
+    },
+    {
+      "path": "swapfile.sys",
+      "name": "交换文件",
+      "level": "danger",
+      "description": "Windows交换文件，用于UWP应用内存交换，系统运行必需。不可删除！",
+      "matchChildren": false
+    },
+    {
+      "path": "Config.Msi",
+      "name": "安装临时目录",
+      "level": "caution",
+      "description": "MSI安装程序临时目录，安装完成后可以删除。",
+      "matchChildren": true
+    },
+    {
+      "path": "PerfLogs",
+      "name": "性能日志",
+      "level": "caution",
+      "description": "Windows性能日志目录，可以安全删除其中的日志文件。",
+      "matchChildren": true
+    },
+    {
+      "path": "Intel",
+      "name": "Intel驱动目录",
+      "level": "warning",
+      "description": "Intel驱动安装文件目录，包含Intel芯片组/显卡等驱动的安装文件。不建议删除，如需清理请通过驱动管理工具。",
+      "matchChildren": true
+    },
+    {
+      "path": "NVIDIA",
+      "name": "NVIDIA驱动目录",
+      "level": "caution",
+      "description": "NVIDIA显卡驱动安装解压目录，安装完成后可以删除，不影响驱动运行。",
+      "matchChildren": true
+    },
+    {
+      "path": "AMD",
+      "name": "AMD驱动目录",
+      "level": "caution",
+      "description": "AMD显卡驱动安装解压目录，安装完成后可以删除，不影响驱动运行。",
+      "matchChildren": true
+    },
+    {
+      "path": "MSOCache",
+      "name": "Office安装缓存",
+      "level": "warning",
+      "description": "Microsoft Office本地安装缓存，用于Office修复和更新。删除可能导致Office无法修复或更新补丁安装失败。",
+      "matchChildren": true
+    },
+    {
+      "path": "Documents and Settings",
+      "name": "旧版用户目录",
+      "level": "danger",
+      "description": "Windows XP时代的用户目录（ junction point 指向Users），系统兼容用。不可删除！",
+      "matchChildren": false
+    },
+    {
+      "path": "ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp",
+      "name": "启动文件夹",
+      "level": "warning",
+      "description": "开机启动项文件夹，其中的快捷方式会在系统启动时自动运行。删除需要确认是否要取消该程序的自启动。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Debug",
+      "name": "调试日志目录",
+      "level": "caution",
+      "description": "Windows调试日志目录，可以安全删除其中的日志文件。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\LiveKernelReports",
+      "name": "内核转储目录",
+      "level": "caution",
+      "description": "Windows内核实时转储报告目录，用于蓝屏等问题分析。可以安全删除。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Minidump",
+      "name": "小内存转储",
+      "level": "caution",
+      "description": "蓝屏小内存转储目录，包含系统崩溃时的诊断信息。可以删除，但删除后蓝屏时无法分析原因。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\MEMORY.DMP",
+      "name": "内存转储文件",
+      "level": "caution",
+      "description": "系统蓝屏时生成的完整内存转储文件，通常体积很大。可以安全删除，用于排查蓝屏问题时才需要保留。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\SoftwareDistribution\\Download",
+      "name": "更新下载缓存",
+      "level": "caution",
+      "description": "Windows Update已下载的更新安装包。可以删除，但已下载的更新需要重新下载才能安装。建议先停止Windows Update服务再删除。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Panther",
+      "name": "安装日志目录",
+      "level": "caution",
+      "description": "Windows安装/升级日志目录。系统安装完成后可以删除。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\PLA",
+      "name": "性能日志报警",
+      "level": "caution",
+      "description": "Windows性能日志和警报目录，可以安全删除。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\RemotePackages",
+      "name": "远程应用包",
+      "level": "warning",
+      "description": "远程应用程序包目录，包含通过远程桌面运行的应用包。不建议删除。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\SoftwareDistribution\\PostRebootEventCache.V2",
+      "name": "重启事件缓存",
+      "level": "caution",
+      "description": "Windows更新重启事件缓存，可以删除。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\SystemResources",
+      "name": "系统资源目录",
+      "level": "danger",
+      "description": "Windows系统资源目录，包含MUI语言资源等系统必需文件。删除会导致系统界面语言异常！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\WinMetadata",
+      "name": "WinRT元数据",
+      "level": "danger",
+      "description": "Windows Runtime API元数据目录，UWP和WinRT程序运行必需。删除会导致UWP应用无法运行！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\PolicyDefinitions",
+      "name": "组策略模板",
+      "level": "warning",
+      "description": "Windows组策略管理模板目录。不使用组策略编辑器可以删除，但建议保留。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\System32\\config",
+      "name": "系统注册表文件",
+      "level": "danger",
+      "description": "Windows注册表配置文件目录（SAM/SOFTWARE/SYSTEM/SECURITY等），系统核心配置存储。删除会导致系统无法启动！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\System32\\drivers",
+      "name": "驱动程序目录",
+      "level": "danger",
+      "description": "系统驱动程序目录（.sys文件），包含硬盘、显卡、网卡等硬件驱动。删除会导致硬件无法工作或系统蓝屏！",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\System32\\DriverStore",
+      "name": "驱动程序存储",
+      "level": "warning",
+      "description": "Windows驱动程序包存储目录，包含所有已安装驱动的备份。不要手动删除，请通过设备管理器卸载不需要的驱动。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\System32\\catroot",
+      "name": "驱动签名目录",
+      "level": "danger",
+      "description": "Windows驱动程序签名和目录数据库目录。删除会导致驱动签名验证失败，硬件无法正常工作！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\System32\\catroot2",
+      "name": "驱动签名目录2",
+      "level": "danger",
+      "description": "Windows驱动程序签名验证数据库目录。删除会导致驱动签名验证失败、Windows Update更新出错！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\System32\\wbem",
+      "name": "WMI管理目录",
+      "level": "danger",
+      "description": "Windows Management Instrumentation(WMI)目录，系统管理和监控必需组件。删除会导致管理工具、系统服务无法正常工作！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\System32\\winevt",
+      "name": "事件日志目录",
+      "level": "caution",
+      "description": "Windows事件日志目录，包含系统、安全、应用程序事件日志。可以删除旧日志，但建议通过事件查看器清理。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\System32\\LogFiles",
+      "name": "系统日志文件",
+      "level": "caution",
+      "description": "Windows系统日志文件目录（IIS、防火墙、SFC等日志）。可以删除旧日志文件。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\System32\\spool",
+      "name": "打印后台目录",
+      "level": "warning",
+      "description": "Windows打印后台处理程序目录，包含打印机驱动和打印队列。删除会导致打印机无法使用！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\INF",
+      "name": "INF驱动配置",
+      "level": "danger",
+      "description": "Windows驱动安装信息目录（.inf文件），包含系统内置驱动的安装配置。删除会导致硬件驱动无法安装！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\ImmersiveControlPanel",
+      "name": "设置面板",
+      "level": "danger",
+      "description": "Windows设置应用目录，包含新版系统设置界面。删除会导致系统设置无法打开！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\ShellComponents",
+      "name": "Shell组件",
+      "level": "danger",
+      "description": "Windows Shell组件目录，任务栏、开始菜单、资源管理器的核心组件。删除会导致桌面无法正常加载！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\ShellExperiences",
+      "name": "Shell体验宿主",
+      "level": "danger",
+      "description": "Windows Shell Experience Host目录，负责开始菜单、通知中心、任务栏弹出界面。删除会导致系统界面严重异常！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\TextInput",
+      "name": "文本输入组件",
+      "level": "danger",
+      "description": "Windows文本输入平台目录，支持触摸键盘、表情面板、输入法等。删除会导致无法输入文字！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\SystemResources",
+      "name": "系统资源目录",
+      "level": "danger",
+      "description": "Windows系统资源目录，包含MUI语言资源等系统必需文件。删除会导致系统界面语言异常！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\WinMetadata",
+      "name": "WinRT元数据",
+      "level": "danger",
+      "description": "Windows Runtime API元数据目录，UWP和WinRT程序运行必需。删除会导致UWP应用无法运行！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\Resources",
+      "name": "系统资源目录",
+      "level": "warning",
+      "description": "Windows系统资源目录，包含主题、Ease of Access主题等资源。删除不常用主题可以，但默认主题请保留。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Globalization",
+      "name": "全球化目录",
+      "level": "danger",
+      "description": "Windows全球化和区域设置目录，包含时区、排序规则等数据。删除会导致时间日期显示异常、时区错误！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\security",
+      "name": "安全模板目录",
+      "level": "warning",
+      "description": "Windows安全模板和策略目录，包含系统安全配置。建议保留，不手动删除。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Vss",
+      "name": "卷影复制目录",
+      "level": "warning",
+      "description": "Windows卷影复制服务(VSS)目录，系统还原和文件历史记录依赖此功能。删除会导致系统还原失效。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\AppReadiness",
+      "name": "应用准备目录",
+      "level": "warning",
+      "description": "Windows应用准备服务目录，用于UWP应用安装和更新。不建议手动删除。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\rescache",
+      "name": "资源缓存目录",
+      "level": "caution",
+      "description": "Windows资源缓存目录，可以安全删除，系统会自动重建。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Performance",
+      "name": "性能计数器",
+      "level": "warning",
+      "description": "Windows性能计数器配置目录。建议保留。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Offline Web Pages",
+      "name": "脱机网页目录",
+      "level": "caution",
+      "description": "IE脱机网页缓存目录，可以安全删除。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Setup",
+      "name": "系统安装脚本",
+      "level": "warning",
+      "description": "Windows安装脚本和配置目录，系统安装/升级时使用。建议保留。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Provisioning",
+      "name": "预配包目录",
+      "level": "warning",
+      "description": "Windows预配包目录，包含系统部署时应用的配置包。建议保留。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\MiracastView",
+      "name": "无线显示目录",
+      "level": "warning",
+      "description": "Windows无线投影(Miracast)支持目录。不使用无线投影功能可以删除，但建议保留。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\Containers",
+      "name": "容器目录",
+      "level": "warning",
+      "description": "Windows容器( Docker等)运行时目录。不使用容器服务可以删除，但建议保留。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\IdentityCRL",
+      "name": "身份认证目录",
+      "level": "warning",
+      "description": "Windows身份认证和客户端许可目录，与Microsoft账户登录相关。不建议删除。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\Tpm",
+      "name": "TPM安全目录",
+      "level": "warning",
+      "description": "TPM(可信平台模块)安全组件目录，用于BitLocker等安全功能。不建议删除。",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\ToastDataManager",
+      "name": "通知管理目录",
+      "level": "warning",
+      "description": "Windows通知(Toast)数据管理目录，存储应用通知历史。不建议手动删除。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\schemas",
+      "name": "XML Schema目录",
+      "level": "warning",
+      "description": "Windows XML Schema目录，包含系统XML配置的模式定义。建议保留。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\Cluster",
+      "name": "集群目录",
+      "level": "warning",
+      "description": "Windows故障转移集群目录。非集群环境一般无影响，但建议保留。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\L2Schemas",
+      "name": "L2TP网络模式",
+      "level": "warning",
+      "description": "L2TP/VPN网络配置Schema目录。不建议删除。",
+      "matchChildren": true
+    },
+    {
+      "path": "bootmgr",
+      "name": "启动管理器",
+      "level": "danger",
+      "description": "Windows启动管理器文件(BOOTMGR)，系统启动必需。删除会导致系统无法启动！",
+      "matchChildren": false
+    },
+    {
+      "path": "BOOTNXT",
+      "name": "启动下一阶段",
+      "level": "danger",
+      "description": "Windows启动下一阶段文件，配合BOOTMGR完成启动。删除会导致系统无法启动！",
+      "matchChildren": false
+    },
+    {
+      "path": "ProgramData\\Microsoft\\Windows\\Start Menu",
+      "name": "开始菜单目录",
+      "level": "warning",
+      "description": "全局开始菜单目录，包含所有用户的开始菜单快捷方式。删除会导致所有程序快捷方式丢失！",
+      "matchChildren": true
+    },
+    {
+      "path": "ProgramData\\Microsoft\\Windows Defender",
+      "name": "Defender配置",
+      "level": "danger",
+      "description": "Windows Defender防病毒配置和定义更新目录。删除会导致杀毒软件异常！",
+      "matchChildren": false
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Microsoft\\Windows\\WebCache",
+      "name": "WebCache数据库",
+      "level": "warning",
+      "description": "IE/Edge浏览器WebCache数据库文件目录。建议通过浏览器「 Internet选项-删除浏览历史」清理。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\D3DSCache",
+      "name": "Direct3D着色器缓存",
+      "level": "caution",
+      "description": "Direct3D着色器缓存目录，用于加速3D渲染。可以安全删除，游戏/3D程序首次启动会重新编译着色器导致短暂卡顿。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\pip",
+      "name": "pip缓存",
+      "level": "caution",
+      "description": "Python pip包管理器缓存目录。可以删除，但再次安装包时会重新下载。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\npm-cache",
+      "name": "npm缓存",
+      "level": "caution",
+      "description": "Node.js npm包管理器缓存目录。可以删除，再次安装包时会重新下载。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Yarn\\Cache",
+      "name": "Yarn缓存",
+      "level": "caution",
+      "description": "Yarn包管理器缓存目录。可以删除，再次安装包时会重新下载。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Docker",
+      "name": "Docker数据",
+      "level": "warning",
+      "description": "Docker Desktop数据目录，包含容器镜像和卷数据。删除会导致所有容器和镜像丢失！请通过Docker Desktop清理。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\JetBrains",
+      "name": "JetBrains配置",
+      "level": "warning",
+      "description": "JetBrains IDE（如IntelliJ/PyCharm/CLion等）配置和缓存目录。可以删除缓存子目录（如caches、tmp、index），但config目录删除会重置IDE设置。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Roaming\\Code",
+      "name": "VS Code配置",
+      "level": "warning",
+      "description": "Visual Studio Code配置和扩展目录。删除会丢失VS Code配置和已安装扩展。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Microsoft\\VisualStudio",
+      "name": "VS缓存",
+      "level": "caution",
+      "description": "Visual Studio缓存目录（如vcpkg、Backup Files等）。部分缓存可以删除，建议通过Visual Studio「清理组件缓存」功能处理。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Microsoft\\Outlook",
+      "name": "Outlook缓存",
+      "level": "warning",
+      "description": "Outlook邮件缓存目录（OST/PST文件）。删除会导致邮件缓存丢失，需要重新同步！请通过Outlook设置清理。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Local\\Microsoft\\OneDrive",
+      "name": "OneDrive缓存",
+      "level": "warning",
+      "description": "OneDrive同步缓存和设置目录。删除可能导致同步问题。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\AppData\\Roaming\\Tencent",
+      "name": "腾讯软件数据",
+      "level": "warning",
+      "description": "腾讯软件（QQ/微信/企业微信等）数据目录，包含聊天记录、接收的文件等。删除会导致聊天记录丢失！请通过软件自身清理功能清理。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\Documents\\WeChat Files",
+      "name": "微信文件",
+      "level": "warning",
+      "description": "微信PC版接收文件和聊天数据目录。删除会丢失接收的文件和聊天记录，请备份后选择性删除不需要的文件。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Users\\*\\Documents\\Tencent Files",
+      "name": "QQ文件",
+      "level": "warning",
+      "description": "QQ PC版接收文件和聊天数据目录。删除会丢失接收的文件和聊天记录，请备份后选择性删除不需要的文件。",
+      "matchChildren": true,
+      "isWildcard": true
+    },
+    {
+      "path": "Windows\\System32\\CodeIntegrity",
+      "name": "代码完整性目录",
+      "level": "danger",
+      "description": "Windows代码完整性(HVCI)目录，包含驱动签名验证和内存完整性规则。删除会导致安全功能失效或系统启动异常！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\System32\\Config\\systemprofile",
+      "name": "系统用户配置",
+      "level": "danger",
+      "description": "SYSTEM系统账户的用户配置目录，系统服务运行时依赖。删除会导致系统服务异常！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\System32\\GroupPolicy",
+      "name": "组策略目录",
+      "level": "warning",
+      "description": "本地组策略配置目录。加入域的计算机不可删除，个人电脑建议保留。",
+      "matchChildren": true
+    },
+    {
+      "path": "Windows\\System32\\Microsoft\\Protect",
+      "name": "DPAPI加密目录",
+      "level": "danger",
+      "description": "Windows数据保护(DPAPI)密钥目录，存储系统和用户加密密钥。删除会导致EFS加密文件、保存的密码等无法解密！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\ServiceProfiles\\LocalService",
+      "name": "本地服务配置",
+      "level": "danger",
+      "description": "LocalService本地服务账户配置目录，系统服务运行依赖。删除会导致系统服务异常！",
+      "matchChildren": false
+    },
+    {
+      "path": "Windows\\ServiceProfiles\\NetworkService",
+      "name": "网络服务配置",
+      "level": "danger",
+      "description": "NetworkService网络服务账户配置目录，网络相关系统服务运行依赖。删除会导致网络服务异常！",
+      "matchChildren": false
+    }
+  ]
+}

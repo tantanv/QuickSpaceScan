@@ -9,7 +9,7 @@ if(MSVC)
 endif()
 set(QT_QML_GENERATE_QMLLS_INI ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2 Network)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
@@ -21,9 +21,23 @@ qt_add_executable(appQuickSpaceScan
     src/core/treeitem.cpp
     src/core/treemodel.h
     src/core/treemodel.cpp
+    src/core/appsettings.h
+    src/core/appsettings.cpp
     src/adapters/drivemanager.h
     src/adapters/drivemanager.cpp
-    resources/resources.qrc
+    src/ai/airiskprovider.h
+    src/ai/airiskprovider.cpp
+    src/risk/pathriskprovider.h
+    src/risk/pathriskprovider.cpp
+)
+
+qt_add_resources(appQuickSpaceScan "resources"
+    PREFIX "/"
+    BASE "resources"
+    FILES
+        resources/icons/app_icon.png
+        resources/system_paths.json
+        resources/ai_config.json
 )
 
 if(WIN32)
@@ -40,6 +54,7 @@ qt_add_qml_module(appQuickSpaceScan
         ui/components/TreeItemDelegate.qml
         ui/components/StatusBar.qml
         ui/components/IconButton.qml
+        ui/components/SettingsDialog.qml
         ui/themes/ThemeManager.qml
         ui/themes/LightTheme.qml
         ui/themes/DarkTheme.qml
@@ -53,11 +68,28 @@ set_target_properties(appQuickSpaceScan PROPERTIES
 )
 
 target_link_libraries(appQuickSpaceScan
-    PRIVATE Qt6::Quick Qt6::QuickControls2
+    PRIVATE Qt6::Quick Qt6::QuickControls2 Qt6::Network
 )
 
 install(TARGETS appQuickSpaceScan
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+add_custom_command(TARGET appQuickSpaceScan POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        "$<TARGET_FILE_DIR:appQuickSpaceScan>/resources"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/resources/system_paths.json"
+        "$<TARGET_FILE_DIR:appQuickSpaceScan>/resources/system_paths.json"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/resources/system_paths.json"
+        "$<TARGET_FILE_DIR:appQuickSpaceScan>/system_paths.json"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/resources/ai_config.json"
+        "$<TARGET_FILE_DIR:appQuickSpaceScan>/resources/ai_config.json"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/resources/ai_config.json"
+        "$<TARGET_FILE_DIR:appQuickSpaceScan>/ai_config.json"
 )

@@ -15,7 +15,17 @@ ApplicationWindow {
     title: "QuickSpaceScan"
     color: theme.backgroundColor
 
-    ThemeManager { id: theme }
+    ThemeManager {
+        id: theme
+        Component.onCompleted: themeName = appSettings.themeName
+    }
+
+    Connections {
+        target: appSettings
+        function onThemeNameChanged() {
+            theme.themeName = appSettings.themeName
+        }
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -82,20 +92,25 @@ ApplicationWindow {
                     width: 36
                     height: 36
                     display: AbstractButton.IconOnly
-                    onClicked: theme.toggleTheme()
+                    text: "⚙"
+                    font.pixelSize: 16
+                    onClicked: {
+                        settingsDialog.loadCurrentValues()
+                        settingsDialog.dialogVisible = true
+                    }
                     background: Rectangle {
                         radius: theme.cornerRadiusSmall
                         color: parent.hovered ? theme.hoverColor : "transparent"
                     }
                     contentItem: Text {
-                        text: theme.isDarkTheme ? "☀" : "🌙"
-                        font.pixelSize: 16
-                        color: theme.textPrimary
+                        text: parent.text
+                        font: parent.font
+                        color: theme.textSecondary
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
                     ToolTip.visible: hovered
-                    ToolTip.text: theme.isDarkTheme ? "切换到浅色模式" : "切换到深色模式"
+                    ToolTip.text: "设置"
                     ToolTip.delay: 500
                 }
             }
@@ -131,6 +146,40 @@ ApplicationWindow {
             statusText: homeView.statusText
             itemCount: homeView.statusItemCount
             sizeText: homeView.statusSizeText
+        }
+    }
+
+    SettingsDialog {
+        id: settingsDialog
+    }
+
+    Rectangle {
+        id: aiLoadingTip
+        visible: homeView.aiLoadingTipPath.length > 0
+        z: 9999
+        width: tipText.implicitWidth + 16
+        height: 22
+        radius: theme.cornerRadiusSmall
+        color: theme.accentColor
+        x: {
+            var px = homeView.aiLoadingTipPos.x + 12
+            if (px + width > rootWindow.width - 12) px = rootWindow.width - width - 12
+            if (px < 12) px = 12
+            return px
+        }
+        y: {
+            var py = homeView.aiLoadingTipPos.y + 16
+            if (py + height > rootWindow.height - 4) py = homeView.aiLoadingTipPos.y - height - 4
+            if (py < 4) py = 4
+            return py
+        }
+
+        Text {
+            id: tipText
+            text: "🔍 AI搜索中..."
+            font.pixelSize: 11
+            color: "#ffffff"
+            anchors.centerIn: parent
         }
     }
 }

@@ -15,13 +15,16 @@ ListView {
     signal goUpRequested()
     signal openInExplorerRequested(string path)
     signal deletePathRequested(string path)
-    signal requestDeleteDialog(string path, string name)
+    signal requestDeleteDialog(string path, string name, var riskInfo)
 
     property int indentSize: 20
     property var flatData: []
     property string contextMenuPath: ""
     property string contextMenuName: ""
     property string selectedPath: ""
+
+    property string loadingTipPath: ""
+    property point loadingTipWindowPos: Qt.point(0, 0)
 
     function rebuildFlatList() {
         var newData = []
@@ -109,6 +112,7 @@ ListView {
         id: contextMenu
         property string menuPath: ""
         property string menuName: ""
+        property var menuRiskInfo: null
         property bool menuVisible: false
         z: 1000
         visible: menuVisible
@@ -117,9 +121,10 @@ ListView {
         width: treeListView.width
         height: treeListView.height
 
-        function showAt(px, py, path, name) {
+        function showAt(px, py, path, name, risk) {
             menuPath = path
             menuName = name
+            menuRiskInfo = risk
             contextMenuContent.x = Math.min(px, treeListView.width - 200)
             contextMenuContent.y = py
             menuVisible = true
@@ -211,7 +216,7 @@ ListView {
                         acceptedButtons: Qt.LeftButton
                         onClicked: {
                             if (contextMenu.menuPath) {
-                                treeListView.requestDeleteDialog(contextMenu.menuPath, contextMenu.menuName)
+                                treeListView.requestDeleteDialog(contextMenu.menuPath, contextMenu.menuName, contextMenu.menuRiskInfo)
                             }
                             contextMenu.hide()
                         }
@@ -234,7 +239,7 @@ ListView {
                 text: "名称"
                 font.pixelSize: 12
                 color: theme.textMuted
-                Layout.preferredWidth: 300
+                Layout.preferredWidth: 240
             }
             Label {
                 text: "大小"
@@ -285,11 +290,92 @@ ListView {
         property bool isDir: isGoUpItem ? true : (currentItem ? currentItem.isDir : false)
         property real itemPercentage: entry ? entry.percentage : 0
 
+        property var hoverRiskInfo: null
+        property bool riskLoading: false
+
+        onItemPathChanged: {
+            riskQueryTimer.stop()
+            hoverRiskInfo = null
+            riskLoading = false
+            if (treeListView.loadingTipPath === itemPath) {
+                treeListView.loadingTipPath = ""
+            }
+        }
+
+        function updateLoadingTipPosition(mx, my) {
+            var targetItem = treeListView.window ? treeListView.window.contentItem : null
+            var mapped = delegateMouseArea.mapToItem(targetItem, mx, my)
+            treeListView.loadingTipWindowPos = Qt.point(mapped.x, mapped.y)
+        }
+
+        onRiskLoadingChanged: {
+            if (riskLoading && delegateMouseArea.containsMouse) {
+                updateLoadingTipPosition(delegateMouseArea.mouseX, delegateMouseArea.mouseY)
+                treeListView.loadingTipPath = itemPath
+            } else if (treeListView.loadingTipPath === itemPath) {
+                treeListView.loadingTipPath = ""
+            }
+        }
+
         signal toggleExpand()
+
+        function queryRisk() {
+            if (isGoUpItem || !itemPath || !pathRiskProvider) {
+                hoverRiskInfo = null
+                riskLoading = false
+                return
+            }
+
+            if (pathRiskProvider.hasCachedResult(itemPath)) {
+                hoverRiskInfo = pathRiskProvider.getCachedResult(itemPath)
+                riskLoading = false
+            } else {
+                hoverRiskInfo = pathRiskProvider.getRiskInfo(itemPath)
+                if (pathRiskProvider.aiConfigured && pathRiskProvider.aiEnabled) {
+                    riskLoading = pathRiskProvider.isRequestPending(itemPath)
+                    pathRiskProvider.requestRiskInfo(itemPath)
+                } else {
+                    riskLoading = false
+                }
+            }
+        }
+
+        Connections {
+            target: pathRiskProvider
+            function onRiskInfoReady(path, info) {
+                if (path === itemPath) {
+                    hoverRiskInfo = info
+                    riskLoading = false
+                    if (treeListView.loadingTipPath === path) treeListView.loadingTipPath = ""
+                }
+            }
+            function onRiskInfoLoading(path) {
+                if (path === itemPath && delegateMouseArea.containsMouse) {
+                    riskLoading = true
+                    updateLoadingTipPosition(delegateMouseArea.mouseX, delegateMouseArea.mouseY)
+                    treeListView.loadingTipPath = itemPath
+                }
+            }
+        }
+
+        Timer {
+            id: riskQueryTimer
+            interval: 400
+            repeat: false
+            onTriggered: delegateRoot.queryRisk()
+        }
+
+        ToolTip.visible: delegateMouseArea.containsMouse && !isGoUpItem && !riskLoading && hoverRiskInfo && hoverRiskInfo.description && hoverRiskInfo.description.length > 0
+        ToolTip.timeout: 20000
+        ToolTip.text: {
+            if (!hoverRiskInfo || !hoverRiskInfo.description) return ""
+            var tag = hoverRiskInfo.label ? ("[" + hoverRiskInfo.label + "] ") : ""
+            return tag + hoverRiskInfo.description
+        }
 
         RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: 8 + (isGoUpItem ? 0 : currentLevel * indentSize)
+            anchors.leftMargin: 8 + currentLevel * indentSize
             anchors.rightMargin: 8
             spacing: 0
 
@@ -344,7 +430,14 @@ ListView {
                 color: isGoUpItem ? theme.primaryColor : theme.textPrimary
                 font.italic: isGoUpItem
                 elide: Text.ElideMiddle
-                Layout.preferredWidth: 280
+                Layout.preferredWidth: 220
+                Layout.maximumWidth: 220
+            }
+
+            Item {
+                Layout.fillWidth: true
+                Layout.minimumWidth: 4
+                visible: false
             }
 
             Label {
@@ -418,12 +511,34 @@ ListView {
             anchors.fill: parent
             hoverEnabled: true
             acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    riskQueryTimer.start()
+                } else {
+                    riskQueryTimer.stop()
+                    hoverRiskInfo = null
+                    riskLoading = false
+                    if (treeListView.loadingTipPath === itemPath) treeListView.loadingTipPath = ""
+                }
+            }
+            onPositionChanged: function(mouse) {
+                delegateRoot.updateLoadingTipPosition(mouse.x, mouse.y)
+            }
             onClicked: function(mouse) {
                 if (mouse.button === Qt.RightButton) {
                     if (!isGoUpItem && currentItem) {
                         treeListView.selectedPath = currentItem.path
+                        var risk = null
+                        if (pathRiskProvider) {
+                            if (pathRiskProvider.hasCachedResult(currentItem.path)) {
+                                risk = pathRiskProvider.getCachedResult(currentItem.path)
+                            } else {
+                                risk = pathRiskProvider.getRiskInfo(currentItem.path)
+                                pathRiskProvider.requestRiskInfo(currentItem.path)
+                            }
+                        }
                         var mapped = delegateRoot.mapToItem(treeListView, mouse.x, mouse.y)
-                        contextMenu.showAt(mapped.x, mapped.y, currentItem.path, currentItem.name)
+                        contextMenu.showAt(mapped.x, mapped.y, currentItem.path, currentItem.name, risk)
                     }
                     return
                 }
@@ -433,7 +548,6 @@ ListView {
                     return
                 }
                 treeListView.selectedPath = currentItem ? currentItem.path : ""
-                // if (hasChildren && mouse.x < 50) delegateRoot.toggleExpand()
                 mouse.accepted = false;
             }
             onDoubleClicked: function(mouse) {

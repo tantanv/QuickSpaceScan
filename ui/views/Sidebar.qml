@@ -94,12 +94,13 @@ Rectangle {
                             color: theme.progressBarBg
 
                             Rectangle {
-                                Layout.fillHeight: true
+                                height: parent.height
                                 radius: 2
                                 color: theme.progressBarFill
 
                                 property double usedRatio: {
                                     var di = driveManager.driveAt(index)
+                                    console.log(di.name,di.totalBytes)
                                     if (di.totalBytes > 0) return (di.totalBytes - di.freeBytes) / di.totalBytes
                                     return 0
                                 }

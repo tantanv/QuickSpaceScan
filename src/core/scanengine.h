@@ -9,6 +9,7 @@
 #include <QMap>
 #include <QSet>
 #include <QVector>
+#include <QVariantMap>
 
 #include "treeitem.h"
 

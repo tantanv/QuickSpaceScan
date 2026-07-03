@@ -5,6 +5,7 @@
 DriveManager::DriveManager(QObject *parent)
     : QAbstractListModel(parent)
 {
+    qRegisterMetaType<DriveInfo>("DriveInfo");
     refreshDrives();
 }
 
@@ -50,6 +51,7 @@ DriveInfo DriveManager::driveAt(int index) const
     if (index >= 0 && index < m_drives.size()) {
         return m_drives.at(index);
     }
+
     return DriveInfo();
 }
 

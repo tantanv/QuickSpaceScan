@@ -7,6 +7,9 @@
 #include <QFile>
 #include <QUrl>
 #include <QDesktopServices>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QRegularExpression>
 #include <functional>
 
 #ifdef Q_OS_WIN
@@ -44,7 +47,7 @@ void ScanTask::run()
 
     DirScanResult result;
     result.dirPath = m_path;
-    for (const QFileInfo &info : entries) {
+    for (const QFileInfo &info : qAsConst(entries)) {
         if (m_engine->m_stopFlag.loadRelaxed() != 0) break;
 
         const QString fileName = info.fileName();
@@ -324,7 +327,7 @@ void ScanEngine::rescanPath(const QString &path)
     };
     collectChildren(item);
 
-    for (TreeItem *child : allChildren) {
+    for (TreeItem *child : qAsConst(allChildren)) {
         removeItemByPath(child->path());
         m_visitedPaths.remove(normalizePathKey(child->path()));
     }
@@ -409,7 +412,7 @@ void ScanEngine::onDirScanned(const DirScanResult &result, int generation)
 
     quint64 dirFileSize = 0;
 
-    for (const FileEntry &fe : result.files) {
+    for (const FileEntry &fe : qAsConst(result.files)) {
         TreeItem *item = new TreeItem(parentItem);
         item->setName(fe.name);
         item->setPath(fe.path);
@@ -445,11 +448,6 @@ void ScanEngine::onDirScanned(const DirScanResult &result, int generation)
 
     parentItem->addSize(dirFileSize);
     m_totalSize += dirFileSize;
-
-    // emit scannedFilesChanged();
-    // emit itemCountChanged();
-    // emit totalSizeChanged();
-    // emit batchItemsAdded();
 }
 
 void ScanEngine::onTaskComplete(int generation)
@@ -539,7 +537,7 @@ bool ScanEngine::deletePath(const QString &path)
             };
             collectAll(item);
 
-            for (TreeItem *node : toDelete) {
+            for (TreeItem *node : qAsConst(toDelete)) {
                 removeItemByPath(node->path());
                 m_visitedPaths.remove(normalizePathKey(node->path()));
             }

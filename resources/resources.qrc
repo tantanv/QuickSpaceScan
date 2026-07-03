@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>icons/app_icon.png</file>
+        <file>system_paths.json</file>
     </qresource>
 </RCC>

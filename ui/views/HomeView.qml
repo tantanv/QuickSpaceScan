@@ -9,13 +9,15 @@ Rectangle {
     id: homeView
     color: "transparent"
 
-    property ScanEngine scanEngine: ScanEngine {}
     property string currentScanPath: ""
     property bool isScanning: false
 
     property string statusText: "就绪"
     property int statusItemCount: 0
     property string statusSizeText: ""
+
+    property alias aiLoadingTipPath: treeListView.loadingTipPath
+    property alias aiLoadingTipPos: treeListView.loadingTipWindowPos
 
     function isRootPath(path) {
         if (!path) return false
@@ -135,19 +137,25 @@ Rectangle {
         id: deleteDialog
         property bool dialogVisible: false
         property string dialogName: ""
+        property var dialogRiskInfo: null
+
+        property int dialogLevelNum: dialogRiskInfo ? (dialogRiskInfo.levelNum | 0) : 0
+        property string dialogLabel: dialogRiskInfo ? (dialogRiskInfo.label || "") : ""
+        property string dialogDescription: dialogRiskInfo ? (dialogRiskInfo.description || "") : ""
+
         anchors.fill: parent
         z: 1000
         visible: dialogVisible
 
         Rectangle {
             anchors.fill: parent
-            color: Qt.rgba(0, 0, 0, 0.4)
+            color: theme.isDarkTheme ? Qt.rgba(0, 0, 0, 0.6) : Qt.rgba(0, 0, 0, 0.3)
             MouseArea { anchors.fill: parent; onClicked: deleteDialog.dialogVisible = false }
         }
 
         Rectangle {
             id: dialogBox
-            width: 420
+            width: 440
             implicitHeight: dialogCol.implicitHeight
             x: (parent.width - width) / 2
             y: (parent.height - implicitHeight) / 2
@@ -169,13 +177,13 @@ Rectangle {
                         anchors.fill: parent
                         anchors.margins: 24
                         anchors.bottomMargin: 12
-                        spacing: 8
+                        spacing: 12
 
                         Text {
-                            text: "确认删除"
+                            text: deleteDialog.dialogLevelNum >= 3 ? "危险操作确认" : (deleteDialog.dialogLevelNum >= 2 ? "警告：请谨慎操作" : "确认删除")
                             font.pixelSize: 18
                             font.weight: Font.DemiBold
-                            color: theme.textPrimary
+                            color: deleteDialog.dialogLevelNum >= 3 ? "#E81123" : (deleteDialog.dialogLevelNum >= 2 ? "#FF8C00" : theme.textPrimary)
                         }
 
                         Text {
@@ -184,6 +192,39 @@ Rectangle {
                             color: theme.textSecondary
                             wrapMode: Text.WordWrap
                             width: parent.width
+                        }
+
+                        Rectangle {
+                            visible: deleteDialog.dialogLevelNum >= 2
+                            width: parent.width
+                            implicitHeight: warnText.contentHeight + 16
+                            radius: theme.cornerRadiusSmall
+                            color: {
+                                if (deleteDialog.dialogLevelNum >= 3)
+                                    return theme.isDarkTheme ? Qt.rgba(232/255, 17/255, 35/255, 0.18) : Qt.rgba(232/255, 17/255, 35/255, 0.08)
+                                return theme.isDarkTheme ? Qt.rgba(255/255, 140/255, 0/255, 0.18) : Qt.rgba(255/255, 140/255, 0/255, 0.08)
+                            }
+                            border.color: {
+                                if (deleteDialog.dialogLevelNum >= 3)
+                                    return theme.isDarkTheme ? Qt.rgba(232/255, 17/255, 35/255, 0.5) : Qt.rgba(232/255, 17/255, 35/255, 0.3)
+                                return theme.isDarkTheme ? Qt.rgba(255/255, 140/255, 0/255, 0.5) : Qt.rgba(255/255, 140/255, 0/255, 0.3)
+                            }
+                            border.width: 1
+
+                            Text {
+                                id: warnText
+                                anchors.top: parent.top
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.topMargin: 8
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                text: (deleteDialog.dialogLevelNum >= 3 ? "⚠️ 【危险】 " : "⚠️ 【警告】 ") + (deleteDialog.dialogDescription ? deleteDialog.dialogDescription : (deleteDialog.dialogLevelNum >= 3 ? "此为系统核心目录/文件，删除将导致系统崩溃或无法启动！" : "删除可能导致软件异常或系统功能受损！"))
+                                font.pixelSize: 12
+                                color: deleteDialog.dialogLevelNum >= 3 ? "#E81123" : "#FF8C00"
+                                wrapMode: Text.WordWrap
+                                width: parent.width - 16
+                            }
                         }
                     }
                 }
@@ -208,11 +249,15 @@ Rectangle {
                             implicitWidth: deleteBtnText.implicitWidth + 32
                             implicitHeight: 32
                             radius: theme.cornerRadiusSmall
-                            color: deleteBtnArea.pressed ? "#a8221a" : (deleteBtnArea.containsMouse ? "#d1342b" : theme.dangerColor)
+                            color: {
+                                if (deleteDialog.dialogLevelNum >= 3) return deleteBtnArea.pressed ? "#a8221a" : (deleteBtnArea.containsMouse ? "#d1342b" : "#E81123")
+                                if (deleteDialog.dialogLevelNum >= 2) return deleteBtnArea.pressed ? "#c26a00" : (deleteBtnArea.containsMouse ? "#e67e00" : "#FF8C00")
+                                return deleteBtnArea.pressed ? "#a8221a" : (deleteBtnArea.containsMouse ? "#d1342b" : theme.dangerColor)
+                            }
 
                             Text {
                                 id: deleteBtnText
-                                text: "删除"
+                                text: deleteDialog.dialogLevelNum >= 3 ? "仍然删除" : "删除"
                                 font.pixelSize: 13
                                 color: "#ffffff"
                                 anchors.centerIn: parent
@@ -303,28 +348,99 @@ Rectangle {
                         ToolTip.delay: 500
                     }
 
-                    Label {
-                        text: currentScanPath || "选择左侧驱动器开始扫描"
-                        font.pixelSize: 13
-                        color: theme.textSecondary
-                        elide: Text.ElideMiddle
+                    Rectangle {
+                        id: pathInputContainer
                         Layout.fillWidth: true
-                    }
+                        height: 28
+                        radius: theme.cornerRadiusSmall
+                        color: pathInput.focus || pathInput.hovered ? theme.controlBackground : "transparent"
+                        border.color: pathInput.focus ? theme.accentColor : (pathInput.hovered ? theme.controlStroke : "transparent")
+                        border.width: 1
 
-                    // Row {
-                    //     spacing: 6
-                    //     visible: isScanning
-                    //     BusyIndicator {
-                    //         width: 16; height: 16
-                    //         running: isScanning
-                    //     }
-                    //     Label {
-                    //         text: formatTotalSize(scanEngine.totalSize)
-                    //         font.pixelSize: 12
-                    //         color: theme.textMuted
-                    //         anchors.verticalCenter: parent.verticalCenter
-                    //     }
-                    // }
+                        TextField {
+                            id: pathInput
+                            anchors.fill: parent
+                            anchors.leftMargin: 6
+                            anchors.rightMargin: 6
+                            text: currentScanPath || ""
+                            font.pixelSize: 13
+                            color: theme.textPrimary
+                            selectByMouse: true
+                            hoverEnabled: true
+                            leftPadding: 0
+                            rightPadding: 0
+                            topPadding: 0
+                            bottomPadding: 0
+                            verticalAlignment: Text.AlignVCenter
+                            background: Item { }
+
+                            Text {
+                                id: placeholderText
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "选择左侧驱动器开始扫描，或输入路径后按回车跳转"
+                                font.pixelSize: 13
+                                color: theme.textDisabled
+                                visible: !pathInput.activeFocus && !pathInput.text
+                            }
+
+                            function syncText() {
+                                if (!activeFocus) {
+                                    pathInput.text = currentScanPath || ""
+                                }
+                            }
+
+                            Component.onCompleted: syncText()
+
+                            Connections {
+                                target: homeView
+                                function onCurrentScanPathChanged() { pathInput.syncText() }
+                            }
+
+                            onActiveFocusChanged: {
+                                if (!activeFocus) {
+                                    pathInput.text = currentScanPath || ""
+                                } else {
+                                    if (!currentScanPath) {
+                                        pathInput.text = ""
+                                    }
+                                    pathInput.selectAll()
+                                }
+                            }
+
+                            onAccepted: {
+                                var inputPath = pathInput.text.trim()
+                                if (!inputPath) {
+                                    pathInput.text = currentScanPath || ""
+                                    pathInput.focus = false
+                                    return
+                                }
+                                var normalized = inputPath.replace(/\//g, "\\")
+                                if (!/^[a-zA-Z]:\\/.test(normalized)) {
+                                    if (/^[a-zA-Z]:$/.test(normalized)) {
+                                        normalized = normalized + "\\"
+                                    } else if (/^[a-zA-Z]$/.test(normalized)) {
+                                        normalized = normalized + ":\\"
+                                    } else {
+                                        statusText = "无效路径: 请输入类似 C:\\ 或 C:\\Users 的完整路径"
+                                        pathInput.focus = false
+                                        return
+                                    }
+                                }
+                                var navigated = scanEngine.navigateToPath(normalized)
+                                if (!navigated) {
+                                    startScan(normalized, false)
+                                }
+                                pathInput.focus = false
+                            }
+
+                            Keys.onEscapePressed: {
+                                pathInput.text = currentScanPath || ""
+                                pathInput.color = currentScanPath ? theme.textPrimary : theme.textDisabled
+                                pathInput.focus = false
+                            }
+                        }
+                    }
                 }
 
                 Rectangle {
@@ -343,10 +459,23 @@ Rectangle {
                 onFolderOpenRequested: function(path) { openFolder(path) }
                 onGoUpRequested: function() { goToParent() }
                 onOpenInExplorerRequested: function(path) { openInExplorer(path) }
-                onRequestDeleteDialog: function(path, name) {
+                onRequestDeleteDialog: function(path, name, risk) {
                     pendingDeletePath = path
                     deleteDialog.dialogName = name
+                    deleteDialog.dialogRiskInfo = risk
                     deleteDialog.dialogVisible = true
+                    if (!pathRiskProvider.hasCachedResult(path)) {
+                        pathRiskProvider.requestRiskInfo(path)
+                    }
+                }
+            }
+
+            Connections {
+                target: pathRiskProvider
+                function onRiskInfoReady(path, info) {
+                    if (deleteDialog.dialogVisible && path === pendingDeletePath) {
+                        deleteDialog.dialogRiskInfo = info
+                    }
                 }
             }
         }
